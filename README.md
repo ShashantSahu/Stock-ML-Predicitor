@@ -72,6 +72,3 @@ stock_ml_app/
 
 ---
 
-## ⚠️ Disclaimer
-This project is for **educational purposes only** as part of the Code_AI/ML Bootcamp.
-It is **not** financial advice. Do not make real investment decisions based on this model.

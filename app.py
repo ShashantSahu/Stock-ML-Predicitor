@@ -182,7 +182,9 @@ with st.sidebar:
     type="password",
     placeholder="Get free key at alphavantage.co",
     help="Free key — no credit card. Visit alphavantage.co/support/#api-key"
-    )
+)
+
+st.write("Alpha Vantage key loaded:", bool(api_key))
     st.markdown("""<div class="api-note">
         🔑 <b>Free key</b> — sign up at <a href="https://alphavantage.co" target="_blank" style="color:#00C2CB">alphavantage.co</a><br>
         Without a key, yfinance data is used (also free).

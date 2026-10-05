@@ -1,6 +1,10 @@
-# 📈 Stock ML Predictor — Code_shashant
+# 📈 Stock ML Predictor — Shashant Sahu
 
-A complete ML-powered stock analysis and price prediction app built with **Streamlit**, **scikit-learn**, and **free stock APIs**.
+An intelligent web-based stock analysis and prediction system built with **Python**, **Streamlit**, **scikit-learn**, and **yFinance**.
+
+The system analyzes historical stock market data and uses machine learning techniques to generate stock price predictions and provide useful market insights.
+
+🌐 **Live Website:** [Stock ML Predictor](YOUR_LIVE_WEBSITE_LINK)
 
 ---
 
@@ -10,68 +14,117 @@ A complete ML-powered stock analysis and price prediction app built with **Strea
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Run the app
+# 2. Run the Streamlit app
 streamlit run app.py
-```
+````
 
-Open **http://localhost:8501** in your browser.
-
----
-
-## 🔑 Free API Setup
-
-### Alpha Vantage (Recommended)
-1. Go to → https://alphavantage.co/support/#api-key
-2. Enter your email — get an API key **instantly**
-3. **No credit card required**
-4. Free tier: 25 requests/day, 5 per minute
-5. Paste the key in the sidebar when the app starts
-
-### yfinance (Automatic Fallback)
-- No key needed — works automatically if no AV key is provided
-- Pulls data directly from Yahoo Finance
-- Unlimited historical data
+Open `http://localhost:8501` in your browser.
 
 ---
 
 ## 📦 Project Structure
 
+```text
+Stock-ML-Predictor/
+├── app.py              ← Main Streamlit application
+├── api_helper.py       ← Stock market data/API handling
+├── ml_engine.py        ← Machine learning and prediction logic
+├── requirements.txt    ← Python dependencies
+├── README.md
+│
+└── assets/             ← Project assets/resources
 ```
-stock_ml_app/
-├── app.py          ← Main Streamlit UI
-├── api_helper.py   ← Alpha Vantage + yfinance data layer
-├── ml_engine.py    ← Feature engineering + ML models
-├── requirements.txt
-└── README.md
+
+---
+
+## 🤖 Machine Learning
+
+The project uses machine learning techniques to analyze historical stock data and generate predictions.
+
+The ML pipeline includes:
+
+* Historical stock data collection
+* Data preprocessing
+* Feature engineering
+* Model training
+* Prediction generation
+* Result visualization
+
+---
+
+## 📊 Features
+
+* 📈 Historical stock price analysis
+* 🔮 Machine learning-based stock prediction
+* 📊 Interactive stock charts
+* 💹 Stock market data analysis
+* 🔎 Stock symbol selection
+* 📅 Historical data visualization
+* 🌐 Interactive web dashboard
+* ⚡ Simple and user-friendly interface
+
+---
+
+## 🔄 ML Workflow
+
+```text
+Stock Symbol
+     ↓
+Historical Market Data
+     ↓
+Data Preprocessing
+     ↓
+Feature Engineering
+     ↓
+Machine Learning Model
+     ↓
+Prediction
+     ↓
+Interactive Dashboard
 ```
 
 ---
 
-## 🤖 ML Models Available
+## 🛠️ Technologies Used
 
-| Model              | Best For                          |
-|--------------------|-----------------------------------|
-| Random Forest      | Robust, handles non-linearity     |
-| Gradient Boosting  | High accuracy, slower training    |
-| Linear Regression  | Baseline, fast, interpretable     |
-| SVR                | Good with small datasets          |
-
----
-
-## 📊 Features Engineered (20+)
-
-- Moving Averages: MA7, MA20, MA50, EMA12, EMA26
-- MACD: MACD line, Signal, Histogram
-- RSI (14-day)
-- Bollinger Bands: Width, Position
-- Price Returns: 1d, 5d, 10d
-- Volatility: 5d, 20d rolling std
-- Volume Ratio
-- Candlestick features: HL range, OC ratio
-- Day of Week
+* **Python**
+* **Streamlit**
+* **Pandas**
+* **NumPy**
+* **Scikit-learn**
+* **yFinance**
+* **Matplotlib**
+* **Machine Learning**
 
 ---
 
-## ⚠️ Disclaimer
-This project is for **educational purposes only** as part of the Code_shashant AI/ML Bootcamp.
-It is **not** financial advice. Do not make real investment decisions based on this model.
+## 🌐 Deployment
+
+The application is deployed as a web-based Streamlit application.
+
+### Run Command
+
+```bash
+streamlit run app.py
+```
+
+The application can be accessed locally at:
+
+```text
+http://localhost:8501
+```
+
+---
+
+## 🎯 Project Objective
+
+To develop an intelligent web-based system that analyzes historical stock market data and uses machine learning techniques to generate stock price predictions and provide users with useful insights through an interactive dashboard.
+
+---
+
+## 👨‍💻 Developer
+
+**Shashant Sahu**
+
+B.Tech Computer Science & Engineering
+

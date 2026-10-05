@@ -177,11 +177,11 @@ with st.sidebar:
     st.markdown("### ⚙️ Configuration")
 
     api_key = st.text_input(
-        "Alpha Vantage API Key",
-        value="",
-        type="password",
-        placeholder="Get free key at alphavantage.co",
-        help="Free key — no credit card. Visit alphavantage.co/support/#api-key"
+    "Alpha Vantage API Key",
+    value=st.secrets.get("ALPHA_VANTAGE_API_KEY", ""),
+    type="password",
+    placeholder="Get free key at alphavantage.co",
+    help="Free key — no credit card. Visit alphavantage.co/support/#api-key"
     )
     st.markdown("""<div class="api-note">
         🔑 <b>Free key</b> — sign up at <a href="https://alphavantage.co" target="_blank" style="color:#00C2CB">alphavantage.co</a><br>

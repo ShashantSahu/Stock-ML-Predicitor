@@ -13,6 +13,8 @@ from plotly.subplots import make_subplots
 from api_helper import get_history, get_quote, yf_info
 from ml_engine import train_and_evaluate, add_features, FEATURE_COLS
 
+# Alpha Vantage API Key
+ALPHA_VANTAGE_API_KEY = st.secrets.get("ALPHA_VANTAGE_API_KEY", "")
 # ──────────────────────────────────────────────────────────
 #  Page config
 # ──────────────────────────────────────────────────────────

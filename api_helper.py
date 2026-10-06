@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 # ─────────────────────────────────────────────
 # Alpha Vantage
 # ─────────────────────────────────────────────
+
 AV_BASE = "https://www.alphavantage.co/query"
 
 
@@ -30,7 +31,6 @@ def av_quote(symbol: str, api_key: str) -> dict | None:
 
         data = r.json()
 
-        # Show Alpha Vantage response problems in Streamlit logs
         if "Note" in data:
             print("Alpha Vantage rate limit:", data["Note"])
             return None
@@ -46,7 +46,7 @@ def av_quote(symbol: str, api_key: str) -> dict | None:
         q = data.get("Global Quote", {})
 
         if not q:
-            print("Alpha Vantage quote: Empty response:", data)
+            print("Alpha Vantage quote: Empty response")
             return None
 
         return {
@@ -74,10 +74,14 @@ def av_daily(
 ) -> pd.DataFrame | None:
     """Daily OHLCV data from Alpha Vantage."""
 
+    # IMPORTANT:
+    # compact is used because it is suitable for the free API.
+    # It returns the latest available daily records.
+
     params = {
         "function": "TIME_SERIES_DAILY",
         "symbol": symbol,
-        "outputsize": outputsize,
+        "outputsize": "compact",
         "apikey": api_key,
     }
 
@@ -87,7 +91,6 @@ def av_daily(
 
         data = r.json()
 
-        # ───── Detect Alpha Vantage errors ─────
         if "Note" in data:
             print("Alpha Vantage rate limit:", data["Note"])
             return None
@@ -100,25 +103,30 @@ def av_daily(
             print("Alpha Vantage error:", data["Error Message"])
             return None
 
-        # ───── Get daily time series ─────
         ts = data.get("Time Series (Daily)", {})
 
         if not ts:
             print("Alpha Vantage: No daily data returned.")
-            print("Alpha Vantage response:", data)
+            print("Response keys:", list(data.keys()))
             return None
 
         rows = []
 
         for date_str, vals in ts.items():
-            rows.append({
-                "date": pd.to_datetime(date_str),
-                "open": float(vals["1. open"]),
-                "high": float(vals["2. high"]),
-                "low": float(vals["3. low"]),
-                "close": float(vals["4. close"]),
-                "volume": int(vals["5. volume"]),
-            })
+            try:
+                rows.append({
+                    "date": pd.to_datetime(date_str),
+                    "open": float(vals["1. open"]),
+                    "high": float(vals["2. high"]),
+                    "low": float(vals["3. low"]),
+                    "close": float(vals["4. close"]),
+                    "volume": int(vals["5. volume"]),
+                })
+            except (KeyError, ValueError, TypeError):
+                continue
+
+        if not rows:
+            return None
 
         df = (
             pd.DataFrame(rows)
@@ -198,7 +206,7 @@ def av_rsi(
 
 
 # ─────────────────────────────────────────────
-# yfinance fallback
+# yFinance fallback
 # ─────────────────────────────────────────────
 
 def yf_history(
@@ -225,10 +233,10 @@ def yf_history(
             }
         )
 
-        df["date"] = (
-            pd.to_datetime(df["date"])
-            .dt.tz_localize(None)
-        )
+        df["date"] = pd.to_datetime(df["date"])
+
+        if hasattr(df["date"].dt, "tz") and df["date"].dt.tz is not None:
+            df["date"] = df["date"].dt.tz_localize(None)
 
         return df[
             [
@@ -299,25 +307,21 @@ def get_history(
         and api_key.strip().lower() != "demo"
     ):
 
-        print(
-            f"Trying Alpha Vantage for {symbol}..."
-        )
+        print(f"Trying Alpha Vantage for {symbol}...")
 
-        outputsize = (
-            "full"
-            if period_days > 100
-            else "compact"
-        )
-
+        # IMPORTANT:
+        # Always use compact for the free API.
         df = av_daily(
             symbol,
             api_key,
-            outputsize
+            "compact"
         )
 
         if df is not None and not df.empty:
 
-            if period_days < 365 * 5:
+            # If user requested a shorter period,
+            # trim the available Alpha Vantage data.
+            if period_days < 365:
 
                 cutoff = (
                     datetime.now()
@@ -329,15 +333,14 @@ def get_history(
                 ].reset_index(drop=True)
 
             print(
-                f"Using Alpha Vantage data for {symbol}"
+                f"Using Alpha Vantage data for {symbol}: "
+                f"{len(df)} rows"
             )
 
             return df
 
     else:
-        print(
-            "Alpha Vantage API key is EMPTY."
-        )
+        print("Alpha Vantage API key is EMPTY.")
 
     # ───── yFinance fallback ─────
 
@@ -428,45 +431,30 @@ def get_quote(
                 else latest
             )
 
-            price = float(
-                latest["Close"]
-            )
-
-            prev_c = float(
-                prev["Close"]
-            )
-
+            price = float(latest["Close"])
+            prev_c = float(prev["Close"])
             chg = price - prev_c
+
+            change_pct = (
+                (chg / prev_c) * 100
+                if prev_c != 0
+                else 0
+            )
 
             return {
                 "symbol": symbol,
                 "price": price,
-                "open": float(
-                    latest["Open"]
-                ),
-                "high": float(
-                    latest["High"]
-                ),
-                "low": float(
-                    latest["Low"]
-                ),
-                "volume": int(
-                    latest["Volume"]
-                ),
+                "open": float(latest["Open"]),
+                "high": float(latest["High"]),
+                "low": float(latest["Low"]),
+                "volume": int(latest["Volume"]),
                 "prev_close": prev_c,
                 "change": chg,
-                "change_pct": (
-                    f"{(chg / prev_c) * 100:+.2f}%"
-                ),
-                "latest_day": str(
-                    h.index[-1].date()
-                ),
+                "change_pct": f"{change_pct:+.2f}%",
+                "latest_day": str(h.index[-1].date()),
             }
 
     except Exception as e:
-        print(
-            "yFinance quote error:",
-            e
-        )
+        print("yFinance quote error:", e)
 
     return {}
